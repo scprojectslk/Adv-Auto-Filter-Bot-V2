@@ -16,14 +16,19 @@ async def start(bot, update):
         file_uid = update.command[1]
     except IndexError:
         file_uid = False
-    
+
     if file_uid:
         file_id, file_name, file_caption, file_type = await db.get_file(file_uid)
-        
-        if (file_id or file_type) == None:
+
+        if ((file_id or file_type)) is None:
             return
-        
-        caption = file_caption if file_caption != ("" or None) else ("<code>" + file_name + "</code>")
+
+        caption = (
+            file_caption
+            if file_caption != ("" or None)
+            else f'<code>{file_name}</code>'
+        )
+
         try:
             await update.reply_cached_media(
                 file_id,
@@ -54,9 +59,9 @@ async def start(bot, update):
     ],[
         InlineKeyboardButton('Help ⚙', callback_data="help")
     ]]
-    
+
     reply_markup = InlineKeyboardMarkup(buttons)
-    
+
     await bot.send_message(
         chat_id=update.chat.id,
         text=Translation.START_TEXT.format(
